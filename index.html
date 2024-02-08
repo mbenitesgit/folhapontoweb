@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML que inicia a aplicação Python</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+
+    <h1>Página HTML que inicia a aplicação Python</h1>
+
+    <button id="startApp">Iniciar App Python</button>
+
+    <script>
+        $(document).ready(function(){
+            // Quando o botão for clicado, iniciar a aplicação Python
+            $('#startApp').click(function(){
+                // Use AJAX para chamar o script Python
+                $.ajax({
+                    url: 'app.py',
+                    type: 'GET',
+                    success: function(response) {
+                        // Exibir resposta (saída do script Python) no console do navegador
+                        console.log(response);
+                    },
+                    error: function() {
+                        console.log('Erro ao iniciar a aplicação Python.');
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
