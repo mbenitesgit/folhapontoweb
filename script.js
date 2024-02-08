@@ -60,8 +60,8 @@ function atualizarTabela() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${dia}</td>
-            <td><input type="time" id="entrada-${dia}" required></td>
-            <td><input type="time" id="saida-${dia}" required></td>
+            <td><input type="text" id="entrada-${dia}" class="flatpickr-input" required></td>
+            <td><input type="text" id="saida-${dia}" class="flatpickr-input" required></td>
             <td><input type="checkbox" id="folga-${dia}"></td>
         `;
         tabelaDias.appendChild(tr);
