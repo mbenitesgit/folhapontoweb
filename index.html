@@ -4,15 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HTML com PHP</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 <body>
 
     <h1>Página HTML com PHP</h1>
 
-    <?php
-        // Incluindo o arquivo PHP
-        include 'index.php';
-    ?>
+    <div id="conteudo-php">
+        <!-- O conteúdo do PHP será carregado aqui dinamicamente -->
+    </div>
+
+    <script>
+        // Usando jQuery para carregar dinamicamente o conteúdo do PHP
+        $(document).ready(function(){
+            $.ajax({
+                url: 'index.php',
+                type: 'GET',
+                success: function(response) {
+                    // Coloca o conteúdo do PHP dentro da div
+                    $('#conteudo-php').html(response);
+                },
+                error: function() {
+                    // Exibe uma mensagem de erro se houver algum problema
+                    $('#conteudo-php').html('Erro ao carregar o arquivo PHP.');
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>
