@@ -1,36 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML que inicia a aplicação Python</title>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <title>Folha de Ponto 2024</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <h1>Página HTML que inicia a aplicação Python</h1>
+    <h1>Folha de Ponto 2024</h1>
 
-    <button id="startApp">Iniciar App Python</button>
+    <label for="entrada">Horário de Entrada:</label>
+    <input type="time" id="entrada" required>
 
-    <script>
-        $(document).ready(function(){
-            // Quando o botão for clicado, iniciar a aplicação Python
-            $('#startApp').click(function(){
-                // Use AJAX para chamar o script Python
-                $.ajax({
-                    url: 'app.py',
-                    type: 'GET',
-                    success: function(response) {
-                        // Exibir resposta (saída do script Python) no console do navegador
-                        console.log(response);
-                    },
-                    error: function() {
-                        console.log('Erro ao iniciar a aplicação Python.');
-                    }
-                });
-            });
-        });
-    </script>
+    <label for="saida">Horário de Saída:</label>
+    <input type="time" id="saida" required>
 
+    <label for="folga">Folga:</label>
+    <input type="checkbox" id="folga">
+
+    <button id="calcular">Calcular</button>
+
+    <p id="resultado"></p>
+
+    <script src="script.js"></script>
 </body>
 </html>
