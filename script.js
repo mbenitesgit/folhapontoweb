@@ -48,6 +48,18 @@ document.getElementById('formulario').addEventListener('change', function(event)
     }
 });
 
+function inicializarFlatpickr() {
+    const inputsHora = document.querySelectorAll('[id^="entrada-"], [id^="saida-"]');
+    inputsHora.forEach(input => {
+        flatpickr(input, {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
+        });
+    });
+}
+
 function atualizarTabela() {
     const mes = document.getElementById('mes').value;
     const ano = document.getElementById('ano').value;
@@ -60,13 +72,15 @@ function atualizarTabela() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${dia}</td>
-            <td><input type="text" id="entrada-${dia}" class="flatpickr-input" required></td>
-            <td><input type="text" id="saida-${dia}" class="flatpickr-input" required></td>
+            <td><input type="text" id="entrada-${dia}" required></td>
+            <td><input type="text" id="saida-${dia}" required></td>
             <td><input type="checkbox" id="folga-${dia}"></td>
         `;
         tabelaDias.appendChild(tr);
     }
+
+    inicializarFlatpickr(); // Chame a inicialização do flatpickr após atualizar a tabela
 }
 
-// Inicializar a tabela quando a página carregar
+// Inicializar a tabela e flatpickr quando a página carregar
 atualizarTabela();
