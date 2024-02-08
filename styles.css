@@ -4,10 +4,10 @@ body {
     color: #333;
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .container {
@@ -17,8 +17,8 @@ body {
     padding: 20px;
     text-align: center;
     width: 80%;
-    max-width: 600px; /* Adicionado para limitar a largura do container */
     box-sizing: border-box;
+    overflow-x: auto; /* Adicionado para permitir rolagem horizontal se necessário */
 }
 
 h1 {
@@ -31,7 +31,7 @@ label {
 }
 
 input, select, button {
-    width: calc(100% - 20px); /* Subtraí 20px para lidar com o padding de 10px */
+    width: 100%;
     padding: 10px;
     margin-bottom: 16px;
     box-sizing: border-box;
