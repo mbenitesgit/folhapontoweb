@@ -27,8 +27,8 @@ function calcularHorasNormais(entrada, saida, folga) {
         return 8; // Se folga, considerar 8 horas
     }
 
-    const entradaHoraMinuto = entrada.split(':');
-    const saidaHoraMinuto = saida.split(':');
+    const entradaHoraMinuto = entrada.split(':').map(Number);
+    const saidaHoraMinuto = saida.split(':').map(Number);
 
     const entradaDate = new Date(2024, 0, 1, entradaHoraMinuto[0], entradaHoraMinuto[1]);
     const saidaDate = new Date(2024, 0, 1, saidaHoraMinuto[0], saidaHoraMinuto[1]);
