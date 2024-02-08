@@ -1,16 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML com PHP</title>
+    <title>Calculadora de Folha de Ponto</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Adicione um arquivo CSS para personalizar o layout -->
 </head>
 <body>
 
-    <h1>Página HTML que executa PHP</h1>
+    <div class="container">
+        <h2>Calculadora de Folha de Ponto</h2>
 
-    <!-- Link para o arquivo PHP -->
-    <a href="index.php">Executar index.php</a>
+        <label for="mes">Selecione o mês:</label>
+        <select id="mes">
+            <?php
+            $meses = [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ];
+            foreach ($meses as $key => $mes) {
+                echo "<option value='".($key+1)."'>$mes</option>";
+            }
+            ?>
+        </select>
 
+        <label for="ano">Ano:</label>
+        <input type="number" id="ano" value="2024" min="2024" max="2100">
+
+        <label for="remuneracao_mensal">Remuneração Mensal:</label>
+        <input type="number" id="remuneracao_mensal" step="0.01" placeholder="Digite a remuneração mensal" required>
+
+        <label for="jornada_mensal">Jornada Mensal (horas):</label>
+        <input type="number" id="jornada_mensal" placeholder="Digite a jornada mensal" required>
+
+        <label for="horarios">Horários:</label>
+        <table id="horariosTable">
+            <tr>
+                <th>Dia</th>
+                <th>Entrada</th>
+                <th>Saída</th>
+                <th>Folga</th>
+            </tr>
+        </table>
+
+        <button onclick="adicionarHorarios()">Adicionar Horários</button>
+        <button onclick="calcularFolha()">Calcular</button>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
