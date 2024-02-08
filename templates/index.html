@@ -38,4 +38,17 @@
                 </tr>
                 {% for dia in range(1, 32) %}
                     <tr>
-                        <td>{{
+                        <td>{{ dia }}</td>
+                        <td><input type="time" name="entrada" required></td>
+                        <td><input type="time" name="saida" required></td>
+                        <td><input type="checkbox" name="folga"></td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+            <input type="submit" value="Calcular">
+        </form>
+    </div>
+
+</body>
+</html>
