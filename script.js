@@ -22,23 +22,6 @@ document.getElementById('calcular').addEventListener('click', function() {
     document.getElementById('resultado').innerHTML = resultado;
 });
 
-function calcularHorasNormais(entrada, saida, folga) {
-    if (folga) {
-        return 8; // Se folga, considerar 8 horas
-    }
-
-    const entradaDate = new Date(`2024-${mes}-${dia}T${entrada}`);
-    const saidaDate = new Date(`2024-${mes}-${dia}T${saida}`);
-    
-    const diferenca = (saidaDate - entradaDate) / 1000 / 60 / 60;
-
-    return diferenca < 8 ? 8 : diferenca;
-}
-
-function calcularHorasExtras(horasNormais) {
-    return horasNormais > 8 ? horasNormais - 8 : 0;
-}
-
 document.getElementById('formulario').addEventListener('change', function(event) {
     if (event.target && event.target.matches('select#mes, input#ano')) {
         atualizarTabela();
