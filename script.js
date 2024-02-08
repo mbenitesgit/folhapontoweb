@@ -1,54 +1,35 @@
-function adicionarHorarios() {
-    var table = document.getElementById("horariosTable");
-    var newRow = table.insertRow(table.rows.length);
+document.getElementById('calcular').addEventListener('click', function() {
+    // Obter os valores dos campos
+    const entrada = document.getElementById('entrada').value;
+    const saida = document.getElementById('saida').value;
+    const folga = document.getElementById('folga').checked;
 
-    var cell1 = newRow.insertCell(0);
-    var cell2 = newRow.insertCell(1);
-    var cell3 = newRow.insertCell(2);
-    var cell4 = newRow.insertCell(3);
+    // Calcular horas normais e extras
+    const horasNormais = calcularHorasNormais(entrada, saida, folga);
+    const horasExtras = calcularHorasExtras(horasNormais);
 
-    var day = table.rows.length - 1;
+    // Exibir resultado
+    const resultado = `Horas Normais: ${horasNormais}h | Horas Extras: ${horasExtras}h`;
+    document.getElementById('resultado').innerHTML = resultado;
+});
 
-    cell1.innerHTML = day;
-    cell2.innerHTML = '<input type="time" id="entrada' + day + '" required>';
-    cell3.innerHTML = '<input type="time" id="saida' + day + '" required>';
-    cell4.innerHTML = '<input type="checkbox" id="folga' + day + '">';
-}
-
-function calcularFolha() {
-    var mes = document.getElementById("mes").value;
-    var ano = document.getElementById("ano").value;
-    var remuneracao_mensal = parseFloat(document.getElementById("remuneracao_mensal").value);
-    var jornada_mensal = parseFloat(document.getElementById("jornada_mensal").value);
+function calcularHorasNormais(entrada, saida, folga) {
+    const entradaDate = new Date(`2024-01-01T${entrada}`);
+    const saidaDate = new Date(`2024-01-01T${saida}`);
     
-    var totalHorasNormais = 0;
-    var totalHorasExtras = 0;
-
-    for (var day = 1; day <= 31; day++) {
-        var entrada = document.getElementById("entrada" + day).value;
-        var saida = document.getElementById("saida" + day).value;
-        var folga = document.getElementById("folga" + day).checked;
-
-        if (!folga && entrada && saida) {
-            var entradaTimestamp = new Date('2000-01-01 ' + entrada).getTime();
-            var saidaTimestamp = new Date('2000-01-01 ' + saida).getTime();
-            var diferenca = (saidaTimestamp - entradaTimestamp - 3600000) / 3600000; // 1 hora = 3600 segundos
-
-            if (diferenca > jornada_mensal) {
-                totalHorasNormais += jornada_mensal;
-                totalHorasExtras += diferenca - jornada_mensal;
-            } else {
-                totalHorasNormais += diferenca;
-            }
-        }
+    // Se folga, considerar 8 horas
+    if (folga) {
+        return 8;
     }
 
-    var resultadoDiv = document.getElementById("resultado");
-    resultadoDiv.innerHTML = "Horas Normais: " + totalHorasNormais.toFixed(2) + " horas<br>";
-    resultadoDiv.innerHTML += "Horas Extras: " + totalHorasExtras.toFixed(2) + " horas<br>";
+    // Calcular diferença em horas
+    const diferenca = (saidaDate - entradaDate) / 1000 / 60 / 60;
 
-    // Cálculos adicionais, se necessário
+    // Se menos de 8 horas, considerar 8 horas
+    return diferenca < 8 ? 8 : diferenca;
+}
 
-    // Exemplo: Cálculo do salário
-    var valorHora = remuneracao_mensal / jornada_mensal;
-    var salario = (totalHoras
+function calcularHorasExtras(horasNormais) {
+    // Se mais de 8 horas, considerar como horas extras
+    return horasNormais > 8 ? horasNormais - 8 : 0;
+}
