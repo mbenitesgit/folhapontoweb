@@ -24,7 +24,7 @@ document.getElementById('calcular').addEventListener('click', function() {
 
 function calcularHorasNormais(entrada, saida, folga) {
     if (folga) {
-        return 8; // Se folga, considerar 8 horas
+        return 0; // Se folga, considerar 0 horas
     }
 
     const entradaHoraMinuto = entrada.split(':').map(Number);
