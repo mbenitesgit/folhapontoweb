@@ -16,9 +16,9 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
     text-align: center;
-    width: 80%;
+    max-width: 600px; /* Limita a largura do container para uma melhor leitura */
+    margin: 20px; /* Adiciona margem para melhor espaçamento */
     box-sizing: border-box;
-    overflow-x: auto; /* Adicionado para permitir rolagem horizontal se necessário */
 }
 
 h1 {
@@ -31,7 +31,7 @@ label {
 }
 
 input, select, button {
-    width: 100%;
+    width: calc(100% - 20px);
     padding: 10px;
     margin-bottom: 16px;
     box-sizing: border-box;
