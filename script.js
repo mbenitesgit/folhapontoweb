@@ -45,7 +45,7 @@ function carregarHorarios() {
     exibirHorarios(horarios);
 }
 
-function inserirHorario() {
+function inserirHorarios() {
     const anoSelecionado = document.getElementById('year').value;
     const mesSelecionado = document.getElementById('month').value;
     const entrada = document.getElementById('entrada').value;
@@ -71,4 +71,28 @@ function inserirHorario() {
     exibirHorarios(horarios);
 }
 
-function
+function formatarData(data) {
+    const ano = data.getFullYear();
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const dia = String(data.getDate()).padStart(2, '0');
+    return `${ano}-${mes}-${dia}`;
+}
+
+function exibirHorarios(horarios) {
+    const tabela = document.getElementById('horariosTable');
+    const tbody = document.getElementById('horariosBody');
+
+    // Limpar tabela antes de adicionar novos dados
+    tbody.innerHTML = '';
+
+    horarios.forEach(horario => {
+        const row = tbody.insertRow();
+        const dataCell = row.insertCell(0);
+        const entradaCell = row.insertCell(1);
+        const saidaCell = row.insertCell(2);
+
+        dataCell.textContent = horario.data;
+        entradaCell.textContent = horario.entrada;
+        saidaCell.textContent = horario.saida;
+    });
+}
