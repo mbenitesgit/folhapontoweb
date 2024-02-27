@@ -1,86 +1,67 @@
-document.getElementById('calcular').addEventListener('click', function() {
-    const mes = document.getElementById('mes').value;
-    const ano = document.getElementById('ano').value;
-    const diasDoMes = new Date(ano, mes, 0).getDate();
-
-    let horasNormaisTotal = 0;
-    let horasExtrasTotal = 0;
-
-    for (let dia = 1; dia <= diasDoMes; dia++) {
-        const entrada = document.getElementById(`entrada-${dia}`).value;
-        const saida = document.getElementById(`saida-${dia}`).value;
-        const folga = document.getElementById(`folga-${dia}`).checked;
-
-        const horasNormais = calcularHorasNormais(entrada, saida, folga);
-        const horasExtras = calcularHorasExtras(horasNormais);
-
-        horasNormaisTotal += horasNormais;
-        horasExtrasTotal += horasExtras;
-    }
-
-    const resultado = `Horas Normais Total: ${horasNormaisTotal}h | Horas Extras Total: ${horasExtrasTotal}h`;
-    document.getElementById('resultado').innerHTML = resultado;
+document.addEventListener('DOMContentLoaded', function () {
+    carregarAnos();
+    carregarMeses();
 });
 
-function calcularHorasNormais(entrada, saida, folga) {
-    if (folga) {
-        return 0; // Se folga, considerar 0 horas
+function carregarAnos() {
+    const selectAno = document.getElementById('year');
+    const anoAtual = new Date().getFullYear();
+
+    for (let ano = anoAtual; ano >= anoAtual - 5; ano--) {
+        const option = document.createElement('option');
+        option.value = ano;
+        option.text = ano;
+        selectAno.add(option);
     }
-
-    const entradaHoraMinuto = entrada.split(':').map(Number);
-    const saidaHoraMinuto = saida.split(':').map(Number);
-
-    const entradaDate = new Date(2024, 0, 1, entradaHoraMinuto[0], entradaHoraMinuto[1]);
-    const saidaDate = new Date(2024, 0, 1, saidaHoraMinuto[0], saidaHoraMinuto[1]);
-    
-    const diferenca = (saidaDate - entradaDate) / 1000 / 60 / 60;
-
-    return diferenca < 8 ? 8 : diferenca;
 }
 
-function calcularHorasExtras(horasNormais) {
-    return horasNormais > 8 ? horasNormais - 8 : 0;
+function carregarMeses() {
+    const selectMes = document.getElementById('month');
+    const meses = [
+        "Janeiro", "Fevereiro", "Março", "Abril",
+        "Maio", "Junho", "Julho", "Agosto",
+        "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+
+    for (let i = 0; i < meses.length; i++) {
+        const option = document.createElement('option');
+        option.value = i + 1; // Mês é indexado de 1 a 12
+        option.text = meses[i];
+        selectMes.add(option);
+    }
 }
 
-document.getElementById('formulario').addEventListener('change', function(event) {
-    if (event.target && event.target.matches('select#mes, input#ano')) {
-        atualizarTabela();
-    }
-});
+function carregarHorarios() {
+    const anoSelecionado = document.getElementById('year').value;
+    const mesSelecionado = document.getElementById('month').value;
 
-function inicializarFlatpickr() {
-    const inputsHora = document.querySelectorAll('[id^="entrada-"], [id^="saida-"]');
-    inputsHora.forEach(input => {
-        flatpickr(input, {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            time_24hr: true
-        });
+    // Aqui você pode fazer uma requisição AJAX para obter os horários do backend,
+    // ou simular dados de exemplo como mostrado abaixo.
+
+    const horarios = [
+        { data: '2024-02-01', entrada: '08:00', saida: '17:00' },
+        { data: '2024-02-02', entrada: '09:00', saida: '18:00' },
+        // Adicione mais horários conforme necessário
+    ];
+
+    exibirHorarios(horarios);
+}
+
+function exibirHorarios(horarios) {
+    const tabela = document.getElementById('horariosTable');
+    const tbody = document.getElementById('horariosBody');
+
+    // Limpar tabela antes de adicionar novos dados
+    tbody.innerHTML = '';
+
+    horarios.forEach(horario => {
+        const row = tbody.insertRow();
+        const dataCell = row.insertCell(0);
+        const entradaCell = row.insertCell(1);
+        const saidaCell = row.insertCell(2);
+
+        dataCell.textContent = horario.data;
+        entradaCell.textContent = horario.entrada;
+        saidaCell.textContent = horario.saida;
     });
 }
-
-function atualizarTabela() {
-    const mes = document.getElementById('mes').value;
-    const ano = document.getElementById('ano').value;
-    const diasDoMes = new Date(ano, mes, 0).getDate();
-
-    const tabelaDias = document.getElementById('tabela-dias');
-    tabelaDias.innerHTML = ''; // Limpar a tabela antes de atualizar
-
-    for (let dia = 1; dia <= diasDoMes; dia++) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${dia}</td>
-            <td><input type="text" id="entrada-${dia}" required></td>
-            <td><input type="text" id="saida-${dia}" required></td>
-            <td><input type="checkbox" id="folga-${dia}"></td>
-        `;
-        tabelaDias.appendChild(tr);
-    }
-
-    inicializarFlatpickr(); // Chame a inicialização do flatpickr após atualizar a tabela
-}
-
-// Inicializar a tabela e flatpickr quando a página carregar
-atualizarTabela();
