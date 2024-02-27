@@ -35,9 +35,7 @@ function carregarHorarios() {
     const anoSelecionado = document.getElementById('year').value;
     const mesSelecionado = document.getElementById('month').value;
 
-    // Aqui você pode fazer uma requisição AJAX para obter os horários do backend,
-    // ou simular dados de exemplo como mostrado abaixo.
-
+    // Simulando dados de exemplo
     const horarios = [
         { data: '2024-02-01', entrada: '08:00', saida: '17:00' },
         { data: '2024-02-02', entrada: '09:00', saida: '18:00' },
@@ -45,6 +43,39 @@ function carregarHorarios() {
     ];
 
     exibirHorarios(horarios);
+}
+
+function inserirHorario() {
+    const anoSelecionado = document.getElementById('year').value;
+    const mesSelecionado = document.getElementById('month').value;
+    const entrada = document.getElementById('entrada').value;
+    const saida = document.getElementById('saida').value;
+
+    // Validar entrada e saída conforme necessário
+
+    const dataInicio = new Date(anoSelecionado, mesSelecionado - 1, 1); // Meses são indexados de 0 a 11
+    const ultimoDia = new Date(anoSelecionado, mesSelecionado, 0).getDate();
+
+    const horarios = [];
+
+    for (let dia = 1; dia <= ultimoDia; dia++) {
+        const data = new Date(anoSelecionado, mesSelecionado - 1, dia);
+        const horario = {
+            data: formatarData(data),
+            entrada: entrada,
+            saida: saida
+        };
+        horarios.push(horario);
+    }
+
+    exibirHorarios(horarios);
+}
+
+function formatarData(data) {
+    const ano = data.getFullYear();
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const dia = String(data.getDate()).padStart(2, '0');
+    return `${ano}-${mes}-${dia}`;
 }
 
 function exibirHorarios(horarios) {
