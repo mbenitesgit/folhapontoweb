@@ -3,53 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Folha Ponto</title>
     <link rel="stylesheet" href="styles.css">
+    <title>Folha de Ponto</title>
 </head>
 <body>
-    <h1>Calculadora de Folha Ponto</h1>
+    <h1>Folha de Ponto</h1>
 
-    <label for="nome">Nome do Colaborador:</label>
-    <input type="text" id="nome">
+    <form id="pontoForm">
+        <label for="funcionarioNome">Nome do Funcionário:</label>
+        <input type="text" id="funcionarioNome" required>
 
-    <label for="cargaHoraria">Carga Horária (em horas):</label>
-    <input type="number" id="cargaHoraria" min="1">
+        <label for="mesAno">Mês/Ano:</label>
+        <input type="month" id="mesAno" required>
 
-    <label for="salario">Salário (por hora):</label>
-    <input type="number" id="salario" min="0.01" step="0.01">
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Entrada</th>
+                    <th>Saída</th>
+                </tr>
+            </thead>
+            <tbody id="pontoBody">
+                <!-- Aqui serão inseridos os campos dinamicamente -->
+            </tbody>
+        </table>
 
-    <label for="ano">Ano:</label>
-    <input type="number" id="ano" min="2022">
-
-    <label for="mes">Mês:</label>
-    <select id="mes">
-        <option value="1">Janeiro</option>
-        <option value="2">Fevereiro</option>
-        <!-- Adicione os outros meses aqui -->
-    </select>
-
-    <h2>Registro de Horário</h2>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Data</th>
-                <th>Entrada</th>
-                <th>Saída</th>
-            </tr>
-        </thead>
-        <tbody id="tabelaHorarios">
-            <!-- As linhas da tabela serão adicionadas dinamicamente com JavaScript -->
-        </tbody>
-    </table>
-
-    <button onclick="adicionarLinhaTabela()">Adicionar Linha</button>
-    <button onclick="calcularFolhaPonto()">Calcular</button>
-
-    <h2>Resultado</h2>
-
-    <p>Total de Horas Normais: <span id="totalHorasNormais">0</span></p>
-    <p>Total de Horas Extras: <span id="totalHorasExtras">0</span></p>
+        <button type="button" onclick="calcularHoras()">Calcular Horas</button>
+    </form>
 
     <script src="script.js"></script>
 </body>
