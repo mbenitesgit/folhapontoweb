@@ -1,37 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Folha de Ponto</title>
     <link rel="stylesheet" href="styles.css">
-    <title>Folha de Ponto</title>
 </head>
 <body>
-    <h1>Folha de Ponto</h1>
+    <div class="container">
+        <h1>Calculadora de Folha de Ponto</h1>
+        
+        <!-- Dropdown para selecionar o mês -->
+        <label for="mes">Selecione o Mês:</label>
+        <select id="mes" name="mes" onchange="organizarDias()">
+            <option value="1">Janeiro</option>
+            <option value="2">Fevereiro</option>
+            <option value="3">Março</option>
+            <option value="4">Abril</option>
+            <option value="5">Maio</option>
+            <option value="6">Junho</option>
+            <option value="7">Julho</option>
+            <option value="8">Agosto</option>
+            <option value="9">Setembro</option>
+            <option value="10">Outubro</option>
+            <option value="11">Novembro</option>
+            <option value="12">Dezembro</option>
+        </select>
+        
+        <!-- Dropdown para selecionar a escala de trabalho -->
+        <label for="escala">Selecione a Escala de Trabalho:</label>
+        <select id="escala" name="escala">
+            <option value="7:20">7:20 Diária</option>
+            <option value="8:00">8h Diária + 4h Fim de Semana</option>
+        </select>
+        
+        <!-- Campo para o salário -->
+        <label for="salario">Salário:</label>
+        <input type="number" id="salario" name="salario" placeholder="Informe o salário" required>
+        
+        <!-- Tabela de dias com horários de entrada e saída -->
+        <h2>Informe os horários de entrada e saída:</h2>
+        <form id="formPonto" method="POST" action="/calcular">
+            <table id="tabelaDias">
+                <thead>
+                    <tr>
+                        <th>Dia</th>
+                        <th>Dia da Semana</th>
+                        <th>Entrada</th>
+                        <th>Intervalo (Saída)</th>
+                        <th>Intervalo (Retorno)</th>
+                        <th>Saída</th>
+                        <th>Folga</th>
+                        <th>Feriado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dias e campos de entrada/saída serão preenchidos dinamicamente -->
+                </tbody>
+            </table>
+            <br>
+            <!-- Botão para gerar cálculos -->
+            <button type="submit">Calcular Folha de Ponto</button>
+        </form>
+        
+        <!-- Resultado dos cálculos -->
+        <div id="resultado">
+            <!-- Os resultados serão exibidos aqui -->
+        </div>
+    </div>
 
-    <form id="pontoForm">
-        <label for="funcionarioNome">Nome do Funcionário:</label>
-        <input type="text" id="funcionarioNome" required>
+    <script>
+        // Função para organizar os dias do mês com os respectivos dias da semana
+        function organizarDias() {
+            let mes = document.getElementById("mes").value;
+            let tabela = document.getElementById("tabelaDias").getElementsByTagName('tbody')[0];
+            tabela.innerHTML = ""; // Limpa a tabela antes de adicionar os novos dias
+            
+            let diasNoMes = new Date(2025, mes, 0).getDate(); // Obtém o número de dias do mês
+            let primeiroDiaMes = new Date(2025, mes - 1, 1); // Obtém o primeiro dia do mês
+            let diaSemana = primeiroDiaMes.getDay(); // Obtém o dia da semana do primeiro dia do mês
+            let diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+            
+            // Adiciona os dias do mês na tabela
+            for (let i = 1; i <= diasNoMes; i++) {
+                let linha = tabela.insertRow();
+                let cellDia = linha.insertCell(0);
+                let cellDiaSemana = linha.insertCell(1);
+                let cellEntrada = linha.insertCell(2);
+                let cellIntervaloSaida = linha.insertCell(3);
+                let cellIntervaloRetorno = linha.insertCell(4);
+                let cellSaida = linha.insertCell(5);
+                let cellFolga = linha.insertCell(6);
+                let cellFeriado = linha.insertCell(7);
 
-        <label for="mesAno">Mês/Ano:</label>
-        <input type="month" id="mesAno" required>
+                cellDia.innerHTML = i; // Número do dia
+                cellDiaSemana.innerHTML = diasSemana[diaSemana]; // Dia da semana
+                cellEntrada.innerHTML = `<input type="text" name="entrada${i}" id="entrada${i}" placeholder="HH:MM" oninput="formatarHora(this)">`;
+                cellIntervaloSaida.innerHTML = `<input type="text" name="intervaloSaida${i}" id="intervaloSaida${i}" placeholder="HH:MM" oninput="formatarHora(this)">`;
+                cellIntervaloRetorno.innerHTML = `<input type="text" name="intervaloRetorno${i}" id="intervaloRetorno${i}" placeholder="HH:MM" oninput="formatarHora(this)">`;
+                cellSaida.innerHTML = `<input type="text" name="saida${i}" id="saida${i}" placeholder="HH:MM" oninput="formatarHora(this)">`;
+                cellFolga.innerHTML = `<input type="checkbox" name="folga${i}" id="folga${i}">`;
+                cellFeriado.innerHTML = `<input type="checkbox" name="feriado${i}" id="feriado${i}">`;
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Entrada</th>
-                    <th>Saída</th>
-                </tr>
-            </thead>
-            <tbody id="pontoBody">
-                <!-- Aqui serão inseridos os campos dinamicamente -->
-            </tbody>
-        </table>
+                diaSemana = (diaSemana + 1) % 7; // Avança para o próximo dia da semana
+            }
+        }
 
-        <button type="button" onclick="calcularHoras()">Calcular Horas</button>
-    </form>
+        // Função para formatar o horário inserido
+        function formatarHora(input) {
+            let valor = input.value.replace(/[^0-9]/g, ''); // Remove tudo, exceto números
+            if (valor.length >= 2) {
+                valor = valor.substring(0, 2) + ':' + valor.substring(2, 4); // Adiciona o ":"
+            }
+            input.value = valor.substring(0, 5); // Limita o valor para 5 caracteres
+        }
 
-    <script src="script.js"></script>
+        // Inicializa a tabela ao carregar a página
+        window.onload = organizarDias;
+    </script>
 </body>
 </html>

@@ -1,31 +1,78 @@
+/* Estilo básico para o corpo da página */
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
 }
 
+/* Container principal */
+.container {
+    width: 80%;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Título */
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+/* Estilo dos campos de entrada e seleção */
 label {
     display: block;
     margin-top: 10px;
+    font-size: 16px;
+    color: #555;
 }
 
-input {
-    margin-bottom: 10px;
-}
-
-table {
+input[type="time"],
+input[type="number"],
+select,
+button {
     width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
 }
 
 button {
-    margin-top: 10px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    border: none;
+    transition: background-color 0.3s ease;
 }
 
-/* Adicione estilos adicionais conforme necessário */
+button:hover {
+    background-color: #45a049;
+}
+
+/* Estilo para os resultados */
+#results {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+}
+
+#results p {
+    font-size: 16px;
+    color: #333;
+}
+
+h3 {
+    text-align: center;
+    color: #333;
+}
