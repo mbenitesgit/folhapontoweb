@@ -1,90 +1,48 @@
-from flask import Flask, render_template, request, jsonify
-from datetime import datetime, timedelta
+import streamlit as st
+import pandas as pd
+import io
+from calculadora_horas import classify_hours, read_pdf_espelho, read_template_csv, read_template_excel, export_to_excel, normalize_date
 
-app = Flask(__name__)
+st.title("Calculadora de Horas Extras — CCT x RH")
 
-# Função para calcular a diferença entre dois horários
-def calcular_diferenca_hora(entrada, saida):
-    entrada = datetime.strptime(entrada, "%H:%M")
-    saida = datetime.strptime(saida, "%H:%M")
-    if saida < entrada:
-        saida += timedelta(days=1)
-    return (saida - entrada).seconds / 3600  # Retorna em horas
+st.write("Faça upload do seu espelho ponto (PDF ou CSV) e, opcionalmente, informe salário para cálculo de valores.")
 
-# Função para calcular horas trabalhadas (descontando intervalo)
-def calcular_horas_trabalhadas(hora_entrada, hora_saida, hora_intervalo_entrada, hora_intervalo_saida):
-    horas_trabalhadas = calcular_diferenca_hora(hora_entrada, hora_saida)
-    horas_intervalo = calcular_diferenca_hora(hora_intervalo_entrada, hora_intervalo_saida)
-    return horas_trabalhadas - horas_intervalo
+salario = st.number_input("Salário mensal (opcional, R$)", min_value=0.0, value=0.0, step=100.0)
+base_segsex = st.time_input("Base diária Seg–Sex", value=pd.to_datetime("08:00").time())
 
-# Função para calcular horas extras
-def calcular_horas_extras(horas_trabalhadas, escala_trabalho, dia_feriado, dia_folga, domingo_extra):
-    horas_normais = 0
-    horas_extra_75 = 0
-    horas_extra_100 = 0
-    if escala_trabalho == "7h20":
-        jornada_diaria = 7 + 20/60  # 7h20
-    elif escala_trabalho == "8h+4h":
-        jornada_diaria = 8  # Considera 8h diárias e 4h aos finais de semana
+feriados_file = st.file_uploader("CSV de feriados (opcional)", type=["csv"])
+ponto_file = st.file_uploader("Espelho ponto (PDF ou CSV)", type=["pdf","csv","xlsx"])
 
-    if dia_feriado:
-        horas_extra_100 = horas_trabalhadas
-        return horas_normais, horas_extra_75, horas_extra_100
+if st.button("Calcular", type="primary") and ponto_file:
+    feriados_list = []
+    if feriados_file:
+        feriados_df = pd.read_csv(feriados_file)
+        for v in feriados_df["data"].tolist():
+            d = normalize_date(str(v)) or pd.to_datetime(str(v)).date()
+            feriados_list.append(d)
 
-    if dia_folga:
-        return 0, 0, 0
-
-    if domingo_extra:
-        horas_extra_100 = horas_trabalhadas
-        return horas_normais, horas_extra_75, horas_extra_100
-
-    if horas_trabalhadas > jornada_diaria:
-        if horas_trabalhadas <= jornada_diaria + 2:
-            horas_extra_75 = horas_trabalhadas - jornada_diaria
-        else:
-            horas_extra_75 = 2
-            horas_extra_100 = horas_trabalhadas - (jornada_diaria + 2)
-        horas_normais = jornada_diaria
+    if ponto_file.name.lower().endswith(".pdf"):
+        df_work = read_pdf_espelho(ponto_file)
+    elif ponto_file.name.lower().endswith(".csv"):
+        df_work = read_template_csv(ponto_file)
     else:
-        horas_normais = horas_trabalhadas
+        df_work = read_template_excel(ponto_file)
 
-    return horas_normais, horas_extra_75, horas_extra_100
+    base_diaria = {0:480,1:480,2:480,3:480,4:480,5:0,6:0}
 
-def calcular_valor_horas_extras(salario, horas_extra_75, horas_extra_100):
-    valor_hora = salario / (44 * 4)
-    valor_hora_extra_75 = valor_hora * 1.75
-    valor_hora_extra_100 = valor_hora * 2
+    df_det, df_resumo = classify_hours(
+        df_work,
+        feriados=feriados_list,
+        base_diaria_minutos=base_diaria,
+        salario_mensal=salario if salario > 0 else None
+    )
 
-    valor_extra_75 = horas_extra_75 * valor_hora_extra_75
-    valor_extra_100 = horas_extra_100 * valor_hora_extra_100
+    buffer = io.BytesIO()
+    export_to_excel(df_det, df_resumo, buffer)
+    buffer.seek(0)
 
-    return valor_extra_75, valor_extra_100
-
-@app.route('/', methods=['GET'])
-def index():
-    return render_template('index.html')
-
-@app.route('/calcular', methods=['POST'])
-def calcular():
-    mes = request.form.get('mes')
-    escala = request.form.get('escala')
-    salario = float(request.form.get('salario'))
-    dados_dias = {}  # Você precisa definir isso com base nas entradas dos usuários
-
-    # Exemplo de dados de dias para cálculo
-    dados_dias[1] = {
-        'hora_entrada': '08:00',
-        'hora_saida': '17:00',
-        'hora_intervalo_entrada': '12:00',
-        'hora_intervalo_saida': '13:00',
-        'feriado': False,
-        'folga': False,
-        'domingo_extra': False
-    }
-
-    resultado = calcular_folha_ponto(mes, 2025, escala, salario, dados_dias)
-
-    return jsonify(resultado)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    st.success("Cálculo concluído!")
+    st.dataframe(df_resumo)
+    st.download_button("Baixar relatório (Excel)", data=buffer,
+                       file_name="relatorio_horas.xlsx",
+                       mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
